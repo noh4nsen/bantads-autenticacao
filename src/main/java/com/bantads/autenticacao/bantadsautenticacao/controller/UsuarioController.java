@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin
 @RestController
+@RequestMapping("usuarios")
 public class UsuarioController {
     
     @GetMapping("/health")
