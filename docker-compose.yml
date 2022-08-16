@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  bantads-autenticacao:
+    container_name: bantads-autenticacao
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 5001:8080
+    networks:
+      - bantads-net
+
+networks:
+  bantads-net:
+    driver: bridge
+    external: true
