@@ -2,7 +2,6 @@ package com.bantads.autenticacao.bantadsautenticacao.controller;
 
 import java.util.UUID;
 
-import org.apache.catalina.connector.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
