@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bantads.autenticacao.bantadsautenticacao.DTOs.NovoUsuarioDTO;
 import com.bantads.autenticacao.bantadsautenticacao.DTOs.UsuarioDTO;
+import com.bantads.autenticacao.bantadsautenticacao.DTOs.UsuarioResponseDTO;
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
-import com.bantads.autenticacao.bantadsautenticacao.model.TipoUsuario;
 import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
 import com.bantads.autenticacao.bantadsautenticacao.tools.Security;
 
@@ -25,31 +24,19 @@ import com.bantads.autenticacao.bantadsautenticacao.tools.Security;
 public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
+
     @Autowired
     private ModelMapper mapper;
 
-
-    // ROTA TEMPORARIA, DEVE SER REMOVIDA DEPOIS DA IMPLEMENTACAO EM SAGA
-    @PostMapping("/cadastrar")
-    ResponseEntity<Usuario> cadastrar(@RequestBody NovoUsuarioDTO NovousuarioDTO) {
-        Usuario usuario = mapper.map(NovousuarioDTO, Usuario.class);
-        usuario.setId(UUID.randomUUID());
-        usuario.setSenha(Security.hash(usuario.getSenha()));
-        
-        usuarioRepository.save(usuario);
-        return ResponseEntity.ok(usuario);
-    }
-
     @PostMapping("/login")
-    ResponseEntity<Usuario> login(@RequestBody UsuarioDTO usuarioDTO) {
-
-        if (usuarioDTO.getEmail().equals(usuarioDTO.getSenha())) {
-            Usuario usuario = new Usuario(UUID.randomUUID(), usuarioDTO.getEmail(), usuarioDTO.getSenha(), TipoUsuario.Administrador);
-            return ResponseEntity.ok().body(usuario);
+    ResponseEntity<UsuarioResponseDTO> login(@RequestBody UsuarioDTO usuarioDTO) {
+        Usuario usuario = usuarioRepository.login(usuarioDTO.getEmail(), Security.hash(usuarioDTO.getSenha()));
+        if (usuario != null) {
+            UsuarioResponseDTO response = mapper.map(usuario, UsuarioResponseDTO.class);
+            return ResponseEntity.ok().body(response);
         } else {
             return ResponseEntity.status(401).build();
         }
-
     }
 
     @GetMapping("/health")

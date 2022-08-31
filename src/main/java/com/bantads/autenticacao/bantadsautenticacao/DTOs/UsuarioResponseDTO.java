@@ -1,23 +1,32 @@
 package com.bantads.autenticacao.bantadsautenticacao.DTOs;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import com.bantads.autenticacao.bantadsautenticacao.model.TipoUsuario;
 
-public class NovoUsuarioDTO implements Serializable {
+public class UsuarioResponseDTO implements Serializable {
+    private UUID id;
     private String email;
-    private String senha;
     private TipoUsuario tipoUsuario;
 
-    public NovoUsuarioDTO() {
+    public UsuarioResponseDTO() {
         super();
     }
 
-    public NovoUsuarioDTO(String email, String senha, TipoUsuario tipoUsuario) {
+    public UsuarioResponseDTO(UUID id, String email, TipoUsuario tipoUsuario) {
         super();
+        this.id = id;
         this.email = email;
-        this.senha = senha;
         this.tipoUsuario = tipoUsuario;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -26,14 +35,6 @@ public class NovoUsuarioDTO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 
     public TipoUsuario getTipoUsuario() {

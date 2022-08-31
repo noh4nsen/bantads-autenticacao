@@ -12,6 +12,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     public Usuario findByEmail(String email);
 
     @Query("from Usuario where email = :email and senha = :senha")
-    public Usuario findByEmailAndSenha(@Param("email") String email, 
+    public Usuario login(@Param("email") String email, 
                                        @Param("senha") String senha);
 }
