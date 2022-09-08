@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
+import com.bantads.autenticacao.bantadsautenticacao.model.TipoUsuario;
 import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
 import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Cliente.SenderCliente;
 import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Gerente.SenderGerente;
@@ -46,9 +47,13 @@ public class ConsumerCadastro {
         } catch (Exception e) {
             System.out.println(e);
             Usuario usuario = objectMapper.readValue(json, Usuario.class);
-            senderGerente.send(usuario.getSaga());
-            senderCliente.send(usuario.getSaga());
-            senderGerenteConta.send(usuario.getSaga());
+            if (usuario.getTipoUsuario() == TipoUsuario.Gerente) {
+                senderGerente.send(usuario.getSaga());
+                senderGerenteConta.send(usuario.getSaga());
+            }
+            if (usuario.getTipoUsuario() == TipoUsuario.Cliente) {
+                senderCliente.send(usuario.getSaga());
+            }
         }
     }
 
