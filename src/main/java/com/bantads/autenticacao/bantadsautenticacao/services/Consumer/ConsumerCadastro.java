@@ -45,9 +45,10 @@ public class ConsumerCadastro {
             sendMail(usuario, password);
         } catch (Exception e) {
             System.out.println(e);
-            senderGerente.send(json);
-            senderCliente.send(json);
-            senderGerenteConta.send(json);
+            Usuario usuario = objectMapper.readValue(json, Usuario.class);
+            senderGerente.send(usuario.getSaga());
+            senderCliente.send(usuario.getSaga());
+            senderGerenteConta.send(usuario.getSaga());
         }
     }
 

@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
 
@@ -15,5 +16,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     public Usuario login(@Param("email") String email,
             @Param("senha") String senha);
 
-    public UUID deleteBySaga(UUID saga);
+    @Transactional
+    public Long deleteBySaga(UUID saga);
 }

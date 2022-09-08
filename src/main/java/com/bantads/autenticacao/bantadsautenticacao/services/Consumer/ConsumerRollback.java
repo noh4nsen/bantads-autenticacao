@@ -8,20 +8,16 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class ConsumerRollback {
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @RabbitListener(queues = "autocadastro-autenticacao")
+    @RabbitListener(queues = "rollback-autocadastro-autenticacao")
     public void receive(@Payload String json) {
         try {
-            UUID saga = objectMapper.readValue(json, UUID.class);
+            UUID saga = UUID.fromString(json);
             usuarioRepository.deleteBySaga(saga);
         } catch (Exception e) {
             System.out.println(e);
