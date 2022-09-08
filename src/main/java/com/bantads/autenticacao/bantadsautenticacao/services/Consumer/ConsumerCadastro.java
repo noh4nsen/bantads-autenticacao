@@ -1,4 +1,4 @@
-package com.bantads.autenticacao.bantadsautenticacao.services;
+package com.bantads.autenticacao.bantadsautenticacao.services.Consumer;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +7,12 @@ import org.springframework.stereotype.Component;
 
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
 import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Cliente.SenderCliente;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Gerente.SenderGerente;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.GerenteConta.SenderGerenteConta;
 import com.bantads.autenticacao.bantadsautenticacao.services.email.MailSenderService;
 import com.bantads.autenticacao.bantadsautenticacao.tools.Security;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -22,17 +26,28 @@ public class ConsumerCadastro {
     @Autowired
     private MailSenderService mailSenderService;
 
+    @Autowired
+    private SenderCliente senderCliente;
+
+    @Autowired
+    private SenderGerente senderGerente;
+
+    @Autowired
+    private SenderGerenteConta senderGerenteConta;
+
     @RabbitListener(queues = "autocadastro-autenticacao")
-    public void receive(@Payload String json) {
+    public void receive(@Payload String json) throws JsonProcessingException {
         try {
             Usuario usuario = objectMapper.readValue(json, Usuario.class);
             String password = createPassword();
             usuario.setSenha(Security.hash(password));
-
             usuarioRepository.save(usuario);
             sendMail(usuario, password);
         } catch (Exception e) {
             System.out.println(e);
+            senderGerente.send(json);
+            senderCliente.send(json);
+            senderGerenteConta.send(json);
         }
     }
 
