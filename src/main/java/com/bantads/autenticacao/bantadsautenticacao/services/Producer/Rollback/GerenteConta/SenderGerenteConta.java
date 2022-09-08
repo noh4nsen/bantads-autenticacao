@@ -1,4 +1,4 @@
-package com.bantads.autenticacao.bantadsautenticacao.services.Producer.GerenteConta;
+package com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.GerenteConta;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package com.bantads.autenticacao.bantadsautenticacao.services.Producer.Gerente;
+package com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Gerente;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Value;

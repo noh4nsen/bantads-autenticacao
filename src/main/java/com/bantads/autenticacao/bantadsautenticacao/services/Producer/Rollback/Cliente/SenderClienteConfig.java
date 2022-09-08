@@ -1,4 +1,4 @@
-package com.bantads.autenticacao.bantadsautenticacao.services.Producer.Cliente;
+package com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Cliente;
 
 
 import org.springframework.amqp.core.Queue;

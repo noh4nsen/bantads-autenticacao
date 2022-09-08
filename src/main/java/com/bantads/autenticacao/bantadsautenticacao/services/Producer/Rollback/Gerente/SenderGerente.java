@@ -1,4 +1,4 @@
-package com.bantads.autenticacao.bantadsautenticacao.services.Producer.Cliente;
+package com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Gerente;
 
 import java.util.UUID;
 
@@ -11,18 +11,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class SenderCliente {
+public class SenderGerente {
     @Autowired
     public RabbitTemplate template;
 
     @Autowired
-    private Queue queueRollbackAutocadastroAutenticacao;
+    private Queue queueRollbackAutocadastroGerente;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     public void send(UUID saga) throws JsonProcessingException {
         String json = objectMapper.writeValueAsString(saga);
-        this.template.convertAndSend(this.queueRollbackAutocadastroAutenticacao.getName(), json);
+        this.template.convertAndSend(this.queueRollbackAutocadastroGerente.getName(), json);
     }
 }

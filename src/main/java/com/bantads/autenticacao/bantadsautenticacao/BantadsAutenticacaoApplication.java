@@ -6,9 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Cliente.SenderCliente;
-import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Gerente.SenderGerente;
-import com.bantads.autenticacao.bantadsautenticacao.services.Producer.GerenteConta.SenderGerenteConta;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Cliente.SenderCliente;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Gerente.SenderGerente;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.GerenteConta.SenderGerenteConta;
 import com.bantads.autenticacao.bantadsautenticacao.services.email.MailSenderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
