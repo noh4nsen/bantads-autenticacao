@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class SenderGerenteConta {
     @Autowired
-    public RabbitTemplate template;
+    private RabbitTemplate template;
 
     @Autowired
     private Queue queueRollbackAutocadastroGerenteConta;
