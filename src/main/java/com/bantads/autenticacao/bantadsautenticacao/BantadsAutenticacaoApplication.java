@@ -6,6 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Cliente.SenderCliente;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Gerente.SenderGerente;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.GerenteConta.SenderGerenteConta;
 import com.bantads.autenticacao.bantadsautenticacao.services.email.MailSenderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,5 +34,20 @@ public class BantadsAutenticacaoApplication {
 	@Bean
 	public MailSenderService mailSenderS() {
 		return new MailSenderService();
+	}
+
+	@Bean
+	public SenderCliente senderC() {
+		return new SenderCliente();
+	}
+
+	@Bean
+	public SenderGerente senderG() {
+		return new SenderGerente();
+	}
+
+	@Bean
+	public SenderGerenteConta senderGC() {
+		return new SenderGerenteConta();
 	}
 }
