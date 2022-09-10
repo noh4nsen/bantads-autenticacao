@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bantads.autenticacao.bantadsautenticacao.DTOs.UsuarioDTO;
 import com.bantads.autenticacao.bantadsautenticacao.DTOs.UsuarioResponseDTO;
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
+import com.bantads.autenticacao.bantadsautenticacao.model.TipoUsuario;
 import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
 import com.bantads.autenticacao.bantadsautenticacao.tools.Security;
 
@@ -29,14 +30,14 @@ public class UsuarioController {
 
     @Autowired
     private ModelMapper mapper;
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> getUsuario(@PathVariable UUID id){
+    public ResponseEntity<UsuarioResponseDTO> getUsuario(@PathVariable UUID id) {
         try {
             Optional<Usuario> usuarioOp = usuarioRepository.findById(id);
 
-            if (usuarioOp.isPresent()){
-            	UsuarioResponseDTO gerente = mapper.map(usuarioOp.get(), UsuarioResponseDTO.class);
+            if (usuarioOp.isPresent()) {
+                UsuarioResponseDTO gerente = mapper.map(usuarioOp.get(), UsuarioResponseDTO.class);
                 return ResponseEntity.ok(gerente);
             } else {
                 return ResponseEntity.notFound().build();
@@ -48,12 +49,31 @@ public class UsuarioController {
 
     @PostMapping("/login")
     ResponseEntity<UsuarioResponseDTO> login(@RequestBody UsuarioDTO usuarioDTO) {
-        Usuario usuario = usuarioRepository.login(usuarioDTO.getEmail(), Security.hash(usuarioDTO.getSenha()));
-        if (usuario != null) {
-            UsuarioResponseDTO response = mapper.map(usuario, UsuarioResponseDTO.class);
-            return ResponseEntity.ok().body(response);
-        } else {
-            return ResponseEntity.status(401).build();
+        try {
+            Usuario usuario = usuarioRepository.login(usuarioDTO.getEmail(), Security.hash(usuarioDTO.getSenha()));
+            if (usuario != null) {
+                UsuarioResponseDTO response = mapper.map(usuario, UsuarioResponseDTO.class);
+                return ResponseEntity.ok().body(response);
+            } else {
+                return ResponseEntity.status(401).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PostMapping("/admin")
+    public ResponseEntity<String> createAdmin() {
+        try {
+            Usuario usuarioOp = usuarioRepository.findByEmail("admin");
+            if(usuarioOp != null)
+                return ResponseEntity.status(409).build();
+
+            Usuario usuario = new Usuario(UUID.randomUUID(), "admin", Security.hash("admin"), TipoUsuario.Administrador);
+            usuarioRepository.save(usuario);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 
