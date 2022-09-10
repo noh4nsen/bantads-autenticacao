@@ -69,11 +69,7 @@ public class UsuarioController {
             if(usuarioOp != null)
                 return ResponseEntity.status(409).build();
 
-            Usuario usuario = new Usuario();
-            usuario.setId(UUID.randomUUID());
-            usuario.setEmail("admin");
-            usuario.setSenha(Security.hash("admin"));
-            usuario.setTipoUsuario(TipoUsuario.Administrador);
+            Usuario usuario = new Usuario(UUID.randomUUID(), "admin", "admin", TipoUsuario.Administrador);
             usuarioRepository.save(usuario);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
