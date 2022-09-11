@@ -43,6 +43,7 @@ public class ConsumerNovoCliente {
             Optional<Usuario> usuarioOp = usuarioRepository.findById(gerarSenhaDTO.getIdExternoUsuario());
             Usuario usuario = usuarioOp.get();
             usuario.setSenha(Security.hash(password));
+            usuario.setAtivo(true);
             usuario.setSaga(gerarSenhaDTO.getSaga());
             usuarioRepository.save(usuario);
             sendMail(usuario, password);

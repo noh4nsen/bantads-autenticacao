@@ -13,7 +13,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     public Usuario findByEmail(String email);
     public Usuario findBySaga(UUID saga);
 
-    @Query("from Usuario where email = :email and senha = :senha")
+    @Query("from Usuario where email = :email and senha = :senha and ativo = true")
     public Usuario login(@Param("email") String email,
             @Param("senha") String senha);
 
