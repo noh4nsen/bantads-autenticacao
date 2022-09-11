@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Cliente.SenderAprovacao;
 import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Cliente.SenderCliente;
 import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Gerente.SenderGerente;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Gerente.SenderRollbackDeleteGerente;
 import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.GerenteConta.SenderGerenteConta;
 import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.GerenteConta.SenderNovaConta;
 import com.bantads.autenticacao.bantadsautenticacao.services.email.MailSenderService;
@@ -61,5 +62,10 @@ public class BantadsAutenticacaoApplication {
 	@Bean
 	public SenderNovaConta senderNc(){
 		return new SenderNovaConta();
+	}
+
+	@Bean
+	public SenderRollbackDeleteGerente senderRdg(){
+		return new SenderRollbackDeleteGerente();
 	}
 }

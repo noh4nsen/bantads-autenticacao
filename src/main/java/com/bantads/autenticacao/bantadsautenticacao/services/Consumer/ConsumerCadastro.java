@@ -41,8 +41,10 @@ public class ConsumerCadastro {
         try {
             Usuario usuario = objectMapper.readValue(json, Usuario.class);
             String password = createPassword();
+            usuario.setAtivo(false);
             if (usuario.getTipoUsuario() == TipoUsuario.Gerente) {
-                usuario.setSenha(Security.hash(password));                
+                usuario.setSenha(Security.hash(password));      
+                usuario.setAtivo(true);          
                 sendMail(usuario, password);
             }
             usuarioRepository.save(usuario);
