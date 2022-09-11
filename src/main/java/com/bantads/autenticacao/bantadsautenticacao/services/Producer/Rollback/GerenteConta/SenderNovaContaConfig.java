@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SenderGerenteContaConfig {
-    @Value("autocadastro-gerente-conta-rollback")
-    private String queueRollbackAutocadastroGerenteConta;
+public class SenderNovaContaConfig {
+    @Value("aprovacao-rollback")
+    private String queueRollbackNovaConta;
 
     @Bean
-    public Queue queueRollbackAutocadastroGerenteConta(){
-        return new Queue(queueRollbackAutocadastroGerenteConta);
+    public Queue queueRollbackNovaConta() {
+        return new Queue(queueRollbackNovaConta);
     }
 }
