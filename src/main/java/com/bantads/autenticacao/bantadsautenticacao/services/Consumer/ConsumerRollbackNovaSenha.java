@@ -10,13 +10,9 @@ import org.springframework.stereotype.Component;
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
 import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
 import com.bantads.autenticacao.bantadsautenticacao.services.email.MailSenderService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class ConsumerRollbackNovaSenha {
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -26,10 +22,11 @@ public class ConsumerRollbackNovaSenha {
     @RabbitListener(queues = "nova-senha-rollback")
     public void receive(@Payload String json) {
         try {
-            UUID saga = objectMapper.readValue(json, UUID.class);
+            UUID saga = UUID.fromString(json);
             Usuario usuario = usuarioRepository.findBySaga(saga);
             if (usuario != null){
                 usuario.setSenha(null);
+                usuario.setAtivo(false);
                 usuarioRepository.save(usuario);
             }
             sendMail(usuario);

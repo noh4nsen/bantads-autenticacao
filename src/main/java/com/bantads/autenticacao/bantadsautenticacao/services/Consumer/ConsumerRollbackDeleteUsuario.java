@@ -10,28 +10,22 @@ import org.springframework.stereotype.Component;
 
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
 import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
-import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Gerente.SenderRollbackDeleteGerente;
 
 @Component
-public class ConsumerDeleteUsuario {
+public class ConsumerRollbackDeleteUsuario {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private SenderRollbackDeleteGerente senderRollbackDeleteGerente;
-
-    @RabbitListener(queues = "delete-usuario")
+    @RabbitListener(queues = "delete-usuario-rollback")
     public void receive(@Payload String json){
         try {
             UUID id = UUID.fromString(json);
             Optional<Usuario> usuarioOp = usuarioRepository.findById(id);
             Usuario usuario = usuarioOp.get();
-            usuario.setAtivo(false);
+            usuario.setAtivo(true);
             usuarioRepository.save(usuario);
         } catch (Exception e) {
             System.out.println(e);
-            UUID id = UUID.fromString(json);
-            senderRollbackDeleteGerente.send(id);
         }
     }
 }
