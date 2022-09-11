@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SenderGerenteConfig {
-    @Value("autocadastro-gerente-rollback")
-    private String queueRollbackAutocadastroGerente;
+public class SenderRollbackDeleteGerenteConfig {
+    @Value("delete-gerente-rollback")
+    private String queueRollbackDeleteGerente;
 
     @Bean
-    public Queue queueRollbackAutocadastroGerente() {
-        return new Queue(queueRollbackAutocadastroGerente);
+    public Queue queueRollbackDeleteGerente() {
+        return new Queue(queueRollbackDeleteGerente);
     }
 }

@@ -1,5 +1,6 @@
 package com.bantads.autenticacao.bantadsautenticacao.services.Consumer;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -8,17 +9,21 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
+import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
 
 @Component
-public class ConsumerRollback {
+public class ConsumerRollbackDeleteUsuario {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @RabbitListener(queues = "autocadastro-autenticacao-rollback")
-    public void receive(@Payload String json) {
+    @RabbitListener(queues = "delete-usuario-rollback")
+    public void receive(@Payload String json){
         try {
-            UUID saga = UUID.fromString(json);
-            usuarioRepository.deleteBySaga(saga);
+            UUID id = UUID.fromString(json);
+            Optional<Usuario> usuarioOp = usuarioRepository.findById(id);
+            Usuario usuario = usuarioOp.get();
+            usuario.setAtivo(true);
+            usuarioRepository.save(usuario);
         } catch (Exception e) {
             System.out.println(e);
         }

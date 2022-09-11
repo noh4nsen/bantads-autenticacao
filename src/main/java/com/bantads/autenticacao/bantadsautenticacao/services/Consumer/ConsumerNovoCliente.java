@@ -1,23 +1,25 @@
 package com.bantads.autenticacao.bantadsautenticacao.services.Consumer;
 
+import java.util.Optional;
+
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import com.bantads.autenticacao.bantadsautenticacao.DTOs.GerarSenhaDTO;
 import com.bantads.autenticacao.bantadsautenticacao.data.UsuarioRepository;
-import com.bantads.autenticacao.bantadsautenticacao.model.TipoUsuario;
 import com.bantads.autenticacao.bantadsautenticacao.model.Usuario;
-import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Cliente.SenderCliente;
-import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Gerente.SenderGerente;
-import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.GerenteConta.SenderGerenteConta;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.Cliente.SenderAprovacao;
+import com.bantads.autenticacao.bantadsautenticacao.services.Producer.Rollback.GerenteConta.SenderNovaConta;
 import com.bantads.autenticacao.bantadsautenticacao.services.email.MailSenderService;
 import com.bantads.autenticacao.bantadsautenticacao.tools.Security;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class ConsumerCadastro {
+public class ConsumerNovoCliente {
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -28,36 +30,28 @@ public class ConsumerCadastro {
     private MailSenderService mailSenderService;
 
     @Autowired
-    private SenderCliente senderCliente;
+    private SenderAprovacao senderAprovacao;
 
     @Autowired
-    private SenderGerente senderGerente;
+    private SenderNovaConta senderNovaConta;
 
-    @Autowired
-    private SenderGerenteConta senderGerenteConta;
-
-    @RabbitListener(queues = "autocadastro-autenticacao")
-    public void receive(@Payload String json) throws JsonProcessingException {
+    @RabbitListener(queues = "gerar-senha-cliente")
+    public void receive(@Payload String json) throws JsonMappingException, JsonProcessingException {
         try {
-            Usuario usuario = objectMapper.readValue(json, Usuario.class);
+            GerarSenhaDTO gerarSenhaDTO = objectMapper.readValue(json, GerarSenhaDTO.class);
             String password = createPassword();
-            usuario.setAtivo(false);
-            if (usuario.getTipoUsuario() == TipoUsuario.Gerente) {
-                usuario.setSenha(Security.hash(password));      
-                usuario.setAtivo(true);          
-                sendMail(usuario, password);
-            }
+            Optional<Usuario> usuarioOp = usuarioRepository.findById(gerarSenhaDTO.getIdExternoUsuario());
+            Usuario usuario = usuarioOp.get();
+            usuario.setSenha(Security.hash(password));
+            usuario.setAtivo(true);
+            usuario.setSaga(gerarSenhaDTO.getSaga());
             usuarioRepository.save(usuario);
+            sendMail(usuario, password);
         } catch (Exception e) {
             System.out.println(e);
-            Usuario usuario = objectMapper.readValue(json, Usuario.class);
-            if (usuario.getTipoUsuario() == TipoUsuario.Gerente) {
-                senderGerente.send(usuario.getSaga());
-                senderGerenteConta.send(usuario.getSaga());
-            }
-            if (usuario.getTipoUsuario() == TipoUsuario.Cliente) {
-                senderCliente.send(usuario.getSaga());
-            }
+            GerarSenhaDTO gerarSenhaDTO = objectMapper.readValue(json, GerarSenhaDTO.class);
+            senderAprovacao.send(gerarSenhaDTO.getSaga());
+            senderNovaConta.send(gerarSenhaDTO.getSaga());
         }
     }
 
@@ -71,7 +65,7 @@ public class ConsumerCadastro {
 
     private void sendMail(Usuario usuario, String senha) {
         String to = usuario.getEmail();
-        String subject = "Bantads " + usuario.getTipoUsuario() + " - Cadastro realizado com sucesso";
+        String subject = "Olá " + usuario.getEmail() + " - Cadastro realizado com sucesso";
         String body = "Seu cadastro foi realizado com sucesso.\n" + "Sua senha é: " + senha;
         mailSenderService.sendMail(to, subject, body);
     }
